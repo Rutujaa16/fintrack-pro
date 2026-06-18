@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTrack-Pro — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base:#0A0E1A; --bg-surface:#121726; --bg-surface-2:#1A2032; --bg-surface-3:#20283D;
+    --border-subtle:#232A3D; --border-strong:#2E3650;
+    --text-primary:#F4F6FB; --text-secondary:#9AA3B8; --text-tertiary:#5C657C;
+    --accent-gold:#C9A661; --accent-gold-soft:rgba(201,166,97,.12);
+    --accent-indigo:#7C8AFF; --accent-indigo-soft:rgba(124,138,255,.12);
+    --success:#34D399; --success-soft:rgba(52,211,153,.12);
+    --warning:#F4B740; --warning-soft:rgba(244,183,64,.12);
+    --error:#FF6B6B; --error-soft:rgba(255,107,107,.12);
+    --info:#5EC8F2; --info-soft:rgba(94,200,242,.12);
+    --r-sm:8px; --r-md:10px; --r-lg:16px; --r-xl:20px; --r-full:999px;
+    --sh-md:0 8px 24px rgba(0,0,0,.40);
+    --gold-glow:0 0 0 1px rgba(201,166,97,.4), 0 8px 24px rgba(201,166,97,.18);
+    --font-display:'Plus Jakarta Sans',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--bg-base); color:var(--text-primary); font-family:var(--font-body);}
+  body{display:grid; grid-template-columns:264px 1fr; min-height:100vh;}
+  a{text-decoration:none; color:inherit;}
+  ::-webkit-scrollbar{width:8px; height:8px;} ::-webkit-scrollbar-thumb{background:var(--bg-surface-3); border-radius:8px;}
+
+  /* sidebar */
+  .sidebar{background:var(--bg-surface); border-right:1px solid var(--border-subtle); padding:24px 16px; display:flex; flex-direction:column; height:100vh; position:sticky; top:0;}
+  .logo{display:flex; align-items:center; gap:10px; padding:0 8px 28px;}
+  .logo .mark{width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--accent-gold),#8a6f3d); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#15110a; font-size:15px;}
+  .logo .name{font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:-.01em;}
+  .nav-section-label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 12px 8px; font-weight:600;}
+  .nav-item{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--r-sm); color:var(--text-secondary); font-size:14px; font-weight:500; margin-bottom:2px; cursor:pointer;}
+  .nav-item svg{width:18px; height:18px; opacity:.85;}
+  .nav-item:hover{background:var(--bg-surface-2); color:var(--text-primary);}
+  .nav-item.active{background:var(--accent-gold-soft); color:var(--accent-gold);}
+  .nav-item.active svg{stroke:var(--accent-gold); opacity:1;}
+  .sidebar-footer{margin-top:auto; border-top:1px solid var(--border-subtle); padding-top:16px; display:flex; align-items:center; gap:10px;}
+  .avatar{width:34px; height:34px; border-radius:50%; background:var(--bg-surface-3); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); flex-shrink:0;}
+  .avatar-large{width:36px; height:36px;}
+  .sidebar-footer .who{font-size:13px; font-weight:600;}
+  .sidebar-footer .plan{font-size:11px; color:var(--text-tertiary);}
+
+  /* main */
+  main{padding:28px 40px 64px; max-width:1280px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; gap:24px;}
+  .search{position:relative; flex:1; max-width:380px;}
+  .search input{width:100%; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-md); padding:10px 14px 10px 38px; color:var(--text-primary); font-size:13px;}
+  .search svg{position:absolute; left:13px; top:50%; transform:translateY(-50%); width:15px; height:15px; stroke:var(--text-tertiary);}
+  .top-actions{display:flex; align-items:center; gap:14px;}
+  .icon-btn{width:36px; height:36px; border-radius:var(--r-md); background:var(--bg-surface); border:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative;}
+  .icon-btn svg{width:17px; height:17px; stroke:var(--text-secondary);}
+  .dot{position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--error); border:1.5px solid var(--bg-base);}
+
+  .page-head{display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:28px;}
+  .page-head h1{font-family:var(--font-display); font-size:26px; font-weight:700; letter-spacing:-.01em;}
+  .page-head .sub{color:var(--text-secondary); font-size:13px; margin-top:4px;}
+
+  .btn{font-family:var(--font-body); font-weight:600; font-size:13px; padding:10px 18px; border-radius:var(--r-md); border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:7px;}
+  .btn-primary{background:var(--accent-gold); color:#171206; box-shadow:var(--gold-glow);}
+  .btn-secondary{background:var(--bg-surface-2); color:var(--text-primary); border-color:var(--border-strong);}
+  .btn svg{width:15px; height:15px;}
+
+  .summary-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px;}
+  .stat-card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-lg); padding:20px;}
+  .stat-card .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .stat-card .label{font-size:12px; color:var(--text-secondary); font-weight:500;}
+  .stat-card .icon{width:30px; height:30px; border-radius:var(--r-sm); display:flex; align-items:center; justify-content:center;}
+  .stat-card .icon svg{width:15px; height:15px;}
+  .stat-card .amount{font-family:var(--font-mono); font-size:25px; font-weight:600; letter-spacing:-.01em; margin-bottom:10px;}
+  .delta{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; padding:3px 8px; border-radius:var(--r-full);}
+  .delta.up{background:var(--success-soft); color:var(--success);}
+  .delta.down{background:var(--error-soft); color:var(--error);}
+  .delta svg{width:11px; height:11px;}
+
+  .content-grid{display:grid; grid-template-columns:1.7fr 1fr; gap:20px;}
+  .card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-lg); padding:24px;}
+  .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;}
+  .card-head h3{font-family:var(--font-display); font-size:16px; font-weight:600;}
+  .card-head .link{font-size:12.5px; color:var(--accent-indigo); font-weight:600; cursor:pointer;}
+  .legend{display:flex; gap:16px; margin-bottom:4px;}
+  .legend .item{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary);}
+  .legend .dot2{width:8px; height:8px; border-radius:50%;}
+  .dot-success{background:var(--success);}
+  .dot-error{background:var(--error);}
+  .stack-col{display:flex; flex-direction:column; gap:20px;}
+  .text-secondary{color:var(--text-secondary);}
+  .align-right{text-align:right;}
+  .icon-gold-bg{background:var(--accent-gold-soft);}
+  .icon-success-bg{background:var(--success-soft);}
+  .icon-error-bg{background:var(--error-soft);}
+  .icon-indigo-bg{background:var(--accent-indigo-soft);}
+  .av-info{background:var(--info-soft); color:var(--info);}
+  .av-success{background:var(--success-soft); color:var(--success);}
+  .av-warning{background:var(--warning-soft); color:var(--warning);}
+  .av-indigo{background:var(--accent-indigo-soft); color:var(--accent-indigo);}
+  .av-error{background:var(--error-soft); color:var(--error);}
+  .fill-warning{width:76%; background:var(--warning);}
+  .fill-error{width:84%; background:var(--error);}
+  .fill-success{width:48%; background:var(--success);}
+  .fill-indigo{width:77%; background:var(--accent-indigo);}
+
+  .chart-wrap{margin-top:8px;}
+
+  table{width:100%; border-collapse:collapse;}
+  th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-tertiary); font-weight:600; padding:0 0 12px; border-bottom:1px solid var(--border-subtle);}
+  td{padding:13px 0; border-bottom:1px solid var(--border-subtle); font-size:13.5px;}
+  tr:last-child td{border-bottom:none;}
+  .merchant{display:flex; align-items:center; gap:10px;}
+  .merchant .av{width:32px; height:32px; border-radius:var(--r-sm); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
+  .merchant .name{font-weight:600; font-size:13.5px;}
+  .merchant .meta{font-size:11.5px; color:var(--text-tertiary); margin-top:1px;}
+  .amt{font-family:var(--font-mono); font-weight:600; text-align:right;}
+  .amt.neg{color:var(--text-primary);}
+  .amt.pos{color:var(--success);}
+
+  .budget-row{margin-bottom:18px;}
+  .budget-row:last-child{margin-bottom:0;}
+  .budget-row .top{display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:7px;}
+  .budget-row .top .name{font-weight:600;}
+  .budget-row .top .nums{font-family:var(--font-mono); color:var(--text-secondary);}
+  .progress{height:7px; border-radius:var(--r-full); background:var(--bg-surface-3); overflow:hidden;}
+  .progress .fill{height:100%; border-radius:var(--r-full);}
+
+  .goal-card{display:flex; gap:14px; align-items:center; padding:14px 0; border-bottom:1px solid var(--border-subtle);}
+  .goal-card:last-child{border-bottom:none; padding-bottom:0;}
+  .ring{position:relative; width:46px; height:46px; flex-shrink:0;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring .pct{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; font-family:var(--font-mono);}
+  .goal-card .name{font-weight:600; font-size:13.5px;}
+  .goal-card .sub{font-size:11.5px; color:var(--text-tertiary); margin-top:2px; font-family:var(--font-mono);}
+
+  .qa-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .qa-item{background:var(--bg-surface-2); border:1px solid var(--border-subtle); border-radius:var(--r-md); padding:14px; display:flex; flex-direction:column; gap:8px; cursor:pointer;}
+  .qa-item:hover{border-color:var(--border-strong);}
+  .qa-item svg{width:17px; height:17px; stroke:var(--accent-gold);}
+  .qa-item span{font-size:12.5px; font-weight:600;}
+</style>
+<link rel="stylesheet" href="styles.css">
+<script src="theme.js" defer></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo"><div class="mark">F</div><div class="name">FinTrack-Pro</div>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙<span>Dark</span></button>
+  </div>
+
+  <div class="nav-section-label">Overview</div>
+  <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Transactions</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Import Statement</div>
+
+  <div class="nav-section-label">Planning</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v4"/></svg>Budgets</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.6a5 5 0 0 0-7.07 0L12 6.34l-1.77-1.74a5 5 0 1 0-7.07 7.07L12 20l8.84-8.33a5 5 0 0 0 0-7.07z"/></svg>Goals</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-6"/></svg>Analytics</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg>Reports</div>
+
+  <div class="nav-section-label">Account</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</div>
+
+  <div class="sidebar-footer">
+    <div class="avatar">RR</div>
+    <div><div class="who">Rutuja Rakibe</div><div class="plan">Premium plan</div></div>
+  </div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input placeholder="Search transactions, categories...">
+    </div>
+    <div class="top-actions">
+      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div class="dot"></div></div>
+      <div class="avatar avatar-large">RR</div>
+    </div>
+  </div>
+
+  <div class="page-head">
+    <div>
+      <h1>Good afternoon, Rutuja</h1>
+      <div class="sub">Here's what's happening with your money — Wednesday, June 17</div>
+    </div>
+    <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Import statement</button>
+  </div>
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="top"><span class="label">Total Balance</span><div class="icon icon-gold-bg"><svg viewBox="0 0 24 24" fill="none" stroke="#C9A661" stroke-width="2"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v2"/></svg></div></div>
+      <div class="amount">₹4,18,920</div>
+      <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l5-5 5 5M7 7h10v10"/></svg>4.2% vs last month</span>
+    </div>
+    <div class="stat-card">
+      <div class="top"><span class="label">Income (June)</span><div class="icon icon-success-bg"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div></div>
+      <div class="amount">₹92,400</div>
+      <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l5-5 5 5M7 7h10v10"/></svg>2.1% vs last month</span>
+    </div>
+    <div class="stat-card">
+      <div class="top"><span class="label">Expenses (June)</span><div class="icon icon-error-bg"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div></div>
+      <div class="amount">₹47,180</div>
+      <span class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M17 7l-5 5-5-5M17 17H7V7"/></svg>6.4% vs last month</span>
+    </div>
+    <div class="stat-card">
+      <div class="top"><span class="label">Savings Rate</span><div class="icon icon-indigo-bg"><svg viewBox="0 0 24 24" fill="none" stroke="#7C8AFF" stroke-width="2"><path d="M20.84 4.6a5 5 0 0 0-7.07 0L12 6.34l-1.77-1.74a5 5 0 1 0-7.07 7.07L12 20l8.84-8.33a5 5 0 0 0 0-7.07z"/></svg></div></div>
+      <div class="amount">48.9%</div>
+      <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l5-5 5 5M7 7h10v10"/></svg>On track for goal</span>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="stack-col">
+      <div class="card">
+        <div class="card-head">
+          <h3>Cash Flow — Last 6 months</h3>
+          <div class="legend">
+            <div class="item"><div class="dot2 dot-success"></div>Income</div>
+            <div class="item"><div class="dot2 dot-error"></div>Expenses</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 560 200" width="100%" height="200">
+            <line x1="0" y1="50" x2="560" y2="50" stroke="#232A3D" stroke-width="1"/>
+            <line x1="0" y1="100" x2="560" y2="100" stroke="#232A3D" stroke-width="1"/>
+            <line x1="0" y1="150" x2="560" y2="150" stroke="#232A3D" stroke-width="1"/>
+            <!-- bars: 6 months, income/expense pairs -->
+            <g>
+              <rect x="20" y="70" width="22" height="110" rx="4" fill="#34D399"/>
+              <rect x="46" y="100" width="22" height="80" rx="4" fill="#FF6B6B"/>
+              <rect x="110" y="55" width="22" height="125" rx="4" fill="#34D399"/>
+              <rect x="136" y="95" width="22" height="85" rx="4" fill="#FF6B6B"/>
+              <rect x="200" y="80" width="22" height="100" rx="4" fill="#34D399"/>
+              <rect x="226" y="110" width="22" height="70" rx="4" fill="#FF6B6B"/>
+              <rect x="290" y="60" width="22" height="120" rx="4" fill="#34D399"/>
+              <rect x="316" y="90" width="22" height="90" rx="4" fill="#FF6B6B"/>
+              <rect x="380" y="65" width="22" height="115" rx="4" fill="#34D399"/>
+              <rect x="406" y="120" width="22" height="60" rx="4" fill="#FF6B6B"/>
+              <rect x="470" y="40" width="22" height="140" rx="4" fill="#34D399"/>
+              <rect x="496" y="105" width="22" height="75" rx="4" fill="#FF6B6B"/>
+            </g>
+            <text x="42" y="195" fill="#5C657C" font-size="10" font-family="Inter" text-anchor="middle">Jan</text>
+            <text x="132" y="195" fill="#5C657C" font-size="10" font-family="Inter" text-anchor="middle">Feb</text>
+            <text x="222" y="195" fill="#5C657C" font-size="10" font-family="Inter" text-anchor="middle">Mar</text>
+            <text x="312" y="195" fill="#5C657C" font-size="10" font-family="Inter" text-anchor="middle">Apr</text>
+            <text x="402" y="195" fill="#5C657C" font-size="10" font-family="Inter" text-anchor="middle">May</text>
+            <text x="492" y="195" fill="#5C657C" font-size="10" font-family="Inter" text-anchor="middle">Jun</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Recent Transactions</h3><span class="link">View all →</span></div>
+        <table>
+          <tr><th>Merchant</th><th>Category</th><th>Date</th><th class="align-right">Amount</th></tr>
+          <tr>
+            <td><div class="merchant"><div class="av av-info">AM</div><div><div class="name">Amazon</div><div class="meta">**** 4821</div></div></div></td>
+            <td><span class="badge badge-neutral">Shopping</span></td>
+            <td class="text-secondary">Jun 16</td>
+            <td class="amt neg">−₹2,340.00</td>
+          </tr>
+          <tr>
+            <td><div class="merchant"><div class="av av-success">AC</div><div><div class="name">Acme Corp Payroll</div><div class="meta">Direct deposit</div></div></div></td>
+            <td><span class="badge badge-success">Income</span></td>
+            <td class="text-secondary">Jun 15</td>
+            <td class="amt pos">+₹92,400.00</td>
+          </tr>
+          <tr>
+            <td><div class="merchant"><div class="av av-warning">SW</div><div><div class="name">Swiggy</div><div class="meta">**** 4821</div></div></div></td>
+            <td><span class="badge badge-neutral">Food</span></td>
+            <td class="text-secondary">Jun 14</td>
+            <td class="amt neg">−₹680.00</td>
+          </tr>
+          <tr>
+            <td><div class="merchant"><div class="av av-indigo">NF</div><div><div class="name">Netflix</div><div class="meta">Recurring</div></div></div></td>
+            <td><span class="badge badge-info">Subscription</span></td>
+            <td class="text-secondary">Jun 13</td>
+            <td class="amt neg">−₹649.00</td>
+          </tr>
+          <tr>
+            <td><div class="merchant"><div class="av av-error">UB</div><div><div class="name">Uber</div><div class="meta">**** 4821</div></div></div></td>
+            <td><span class="badge badge-neutral">Transport</span></td>
+            <td class="text-secondary">Jun 12</td>
+            <td class="amt neg">−₹310.00</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="stack-col">
+      <div class="card">
+        <div class="card-head"><h3>Budget Remaining</h3><span class="link">Manage →</span></div>
+        <div class="budget-row">
+          <div class="top"><span class="name">Food &amp; Dining</span><span class="nums">₹6,800 / ₹9,000</span></div>
+          <div class="progress"><div class="fill fill-warning"></div></div>
+        </div>
+        <div class="budget-row">
+          <div class="top"><span class="name">Shopping</span><span class="nums">₹4,200 / ₹5,000</span></div>
+          <div class="progress"><div class="fill fill-error"></div></div>
+        </div>
+        <div class="budget-row">
+          <div class="top"><span class="name">Transport</span><span class="nums">₹1,900 / ₹4,000</span></div>
+          <div class="progress"><div class="fill fill-success"></div></div>
+        </div>
+        <div class="budget-row">
+          <div class="top"><span class="name">Subscriptions</span><span class="nums">₹1,540 / ₹2,000</span></div>
+          <div class="progress"><div class="fill fill-indigo"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Goals</h3><span class="link">View all →</span></div>
+        <div class="goal-card">
+          <div class="ring"><svg width="46" height="46"><circle cx="23" cy="23" r="19" fill="none" stroke="#20283D" stroke-width="5"/><circle cx="23" cy="23" r="19" fill="none" stroke="#C9A661" stroke-width="5" stroke-dasharray="119.4" stroke-dashoffset="70.5" stroke-linecap="round"/></svg><div class="pct">41%</div></div>
+          <div><div class="name">Japan Trip</div><div class="sub">₹62,000 / ₹1,50,000</div></div>
+        </div>
+        <div class="goal-card">
+          <div class="ring"><svg width="46" height="46"><circle cx="23" cy="23" r="19" fill="none" stroke="#20283D" stroke-width="5"/><circle cx="23" cy="23" r="19" fill="none" stroke="#34D399" stroke-width="5" stroke-dasharray="119.4" stroke-dashoffset="24" stroke-linecap="round"/></svg><div class="pct">80%</div></div>
+          <div><div class="name">Emergency Fund</div><div class="sub">₹2,40,000 / ₹3,00,000</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Quick Actions</h3></div>
+        <div class="qa-grid">
+          <div class="qa-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><span>Add transaction</span></div>
+          <div class="qa-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg><span>Create budget</span></div>
+          <div class="qa-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.6a5 5 0 0 0-7.07 0L12 6.34l-1.77-1.74a5 5 0 1 0-7.07 7.07L12 20l8.84-8.33a5 5 0 0 0 0-7.07z"/></svg><span>New goal</span></div>
+          <div class="qa-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg><span>Export report</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

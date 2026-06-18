@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTrack-Pro — Import Bank Statement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base:#0A0E1A; --bg-surface:#121726; --bg-surface-2:#1A2032; --bg-surface-3:#20283D;
+    --border-subtle:#232A3D; --border-strong:#2E3650;
+    --text-primary:#F4F6FB; --text-secondary:#9AA3B8; --text-tertiary:#5C657C;
+    --accent-gold:#C9A661; --accent-gold-soft:rgba(201,166,97,.12);
+    --accent-indigo:#7C8AFF; --accent-indigo-soft:rgba(124,138,255,.12);
+    --success:#34D399; --success-soft:rgba(52,211,153,.12);
+    --warning:#F4B740; --warning-soft:rgba(244,183,64,.12);
+    --error:#FF6B6B; --error-soft:rgba(255,107,107,.12);
+    --info:#5EC8F2; --info-soft:rgba(94,200,242,.12);
+    --r-sm:8px; --r-md:10px; --r-lg:16px; --r-full:999px;
+    --gold-glow:0 0 0 1px rgba(201,166,97,.4), 0 8px 24px rgba(201,166,97,.18);
+    --font-display:'Plus Jakarta Sans',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--bg-base); color:var(--text-primary); font-family:var(--font-body);}
+  body{display:grid; grid-template-columns:264px 1fr; min-height:100vh;}
+  a{text-decoration:none; color:inherit;}
+  ::-webkit-scrollbar{width:8px; height:8px;} ::-webkit-scrollbar-thumb{background:var(--bg-surface-3); border-radius:8px;}
+
+  .sidebar{background:var(--bg-surface); border-right:1px solid var(--border-subtle); padding:24px 16px; display:flex; flex-direction:column; height:100vh; position:sticky; top:0;}
+  .logo{display:flex; align-items:center; gap:10px; padding:0 8px 28px;}
+  .logo .mark{width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--accent-gold),#8a6f3d); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#15110a; font-size:15px;}
+  .logo .name{font-family:var(--font-display); font-weight:700; font-size:16px;}
+  .nav-section-label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 12px 8px; font-weight:600;}
+  .nav-item{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--r-sm); color:var(--text-secondary); font-size:14px; font-weight:500; margin-bottom:2px; cursor:pointer;}
+  .nav-item svg{width:18px; height:18px; opacity:.85;}
+  .nav-item:hover{background:var(--bg-surface-2); color:var(--text-primary);}
+  .nav-item.active{background:var(--accent-gold-soft); color:var(--accent-gold);}
+  .nav-item.active svg{stroke:var(--accent-gold); opacity:1;}
+  .sidebar-footer{margin-top:auto; border-top:1px solid var(--border-subtle); padding-top:16px; display:flex; align-items:center; gap:10px;}
+  .avatar{width:34px; height:34px; border-radius:50%; background:var(--bg-surface-3); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); flex-shrink:0;}
+  .sidebar-footer .who{font-size:13px; font-weight:600;}
+  .sidebar-footer .plan{font-size:11px; color:var(--text-tertiary);}
+
+  main{padding:28px 40px 64px; max-width:980px;}
+  .page-head{margin-bottom:32px;}
+  .page-head h1{font-family:var(--font-display); font-size:26px; font-weight:700; letter-spacing:-.01em;}
+  .page-head .sub{color:var(--text-secondary); font-size:13px; margin-top:4px;}
+
+  /* stepper */
+  .stepper{display:flex; align-items:center; margin-bottom:36px;}
+  .step{display:flex; align-items:center; gap:10px; cursor:pointer;}
+  .step .circ{width:30px; height:30px; border-radius:50%; background:var(--bg-surface-2); border:1.5px solid var(--border-strong); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; font-family:var(--font-mono); color:var(--text-tertiary); flex-shrink:0;}
+  .step.done .circ{background:var(--success); border-color:var(--success); color:#06281c;}
+  .step.active .circ{background:var(--accent-gold); border-color:var(--accent-gold); color:#171206;}
+  .step .label{font-size:13px; font-weight:600; color:var(--text-tertiary);}
+  .step.active .label, .step.done .label{color:var(--text-primary);}
+  .step-line{flex:1; height:1px; background:var(--border-strong); margin:0 14px;}
+  .step-line.done{background:var(--success);}
+
+  .card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-lg); padding:32px;}
+  .btn{font-family:var(--font-body); font-weight:600; font-size:13.5px; padding:11px 20px; border-radius:var(--r-md); border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:7px;}
+  .btn-primary{background:var(--accent-gold); color:#171206; box-shadow:var(--gold-glow);}
+  .btn-secondary{background:var(--bg-surface-2); color:var(--text-primary); border-color:var(--border-strong);}
+  .btn svg{width:15px; height:15px;}
+  .actions-row{display:flex; justify-content:flex-end; gap:10px; margin-top:28px;}
+
+  /* step 1: upload */
+  .dropzone{border:2px dashed var(--border-strong); border-radius:var(--r-lg); padding:56px 24px; display:flex; flex-direction:column; align-items:center; text-align:center; background:var(--bg-surface-2); margin-bottom:24px;}
+  .dropzone .ic{width:56px; height:56px; border-radius:16px; background:var(--accent-gold-soft); display:flex; align-items:center; justify-content:center; margin-bottom:18px;}
+  .dropzone .ic svg{width:26px; height:26px; stroke:var(--accent-gold);}
+  .dropzone h3{font-family:var(--font-display); font-size:17px; font-weight:600; margin-bottom:6px;}
+  .dropzone p{color:var(--text-secondary); font-size:13px; margin-bottom:20px;}
+  .format-row{display:flex; gap:10px;}
+  .format-pill{display:flex; align-items:center; gap:6px; background:var(--bg-surface-3); border-radius:var(--r-full); padding:6px 14px; font-size:12px; font-weight:600; color:var(--text-secondary);}
+
+  .history-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .history-head h3{font-family:var(--font-display); font-size:15px; font-weight:600;}
+  .hist-row{display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid var(--border-subtle); font-size:13px;}
+  .hist-row:last-child{border-bottom:none;}
+  .hist-row .ic{width:34px; height:34px; border-radius:var(--r-sm); background:var(--bg-surface-3); display:flex; align-items:center; justify-content:center;}
+  .hist-row .ic svg{width:15px; height:15px; stroke:var(--text-secondary);}
+  .hist-row .name{font-weight:600;}
+  .hist-row .meta{color:var(--text-tertiary); font-size:11.5px; margin-top:1px;}
+  .badge{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:var(--r-full);}
+  .badge-success{background:var(--success-soft); color:var(--success);}
+
+  /* step 2: mapping */
+  .map-row{display:grid; grid-template-columns:1fr 28px 1fr; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid var(--border-subtle);}
+  .map-row:last-child{border-bottom:none;}
+  .map-col{background:var(--bg-surface-2); border:1px solid var(--border-subtle); border-radius:var(--r-md); padding:12px 14px;}
+  .map-col .l{font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-tertiary); margin-bottom:4px;}
+  .map-col .v{font-family:var(--font-mono); font-size:12.5px;}
+  select.input{width:100%; background:var(--bg-surface-2); border:1px solid var(--border-strong); border-radius:var(--r-md); padding:11px 12px; color:var(--text-primary); font-size:13px; font-family:var(--font-body);}
+  .arrow{display:flex; justify-content:center; color:var(--text-tertiary);}
+
+  /* step 3: preview */
+  .stat-strip{display:flex; gap:14px; margin-bottom:22px;}
+  .ministat{flex:1; background:var(--bg-surface-2); border:1px solid var(--border-subtle); border-radius:var(--r-md); padding:14px 16px;}
+  .ministat .v{font-family:var(--font-mono); font-size:20px; font-weight:600;}
+  .ministat .l{font-size:11.5px; color:var(--text-tertiary); margin-top:4px;}
+  table{width:100%; border-collapse:collapse;}
+  th{text-align:left; font-size:10.5px; text-transform:uppercase; color:var(--text-tertiary); font-weight:600; padding:0 0 10px;}
+  td{padding:10px 0; border-top:1px solid var(--border-subtle); font-size:13px;}
+  .err-row td{background:var(--error-soft);}
+  .amt-mono{font-family:var(--font-mono); text-align:right;}
+
+  /* step 4: success */
+  .success-wrap{display:flex; flex-direction:column; align-items:center; text-align:center; padding:24px 0 8px;}
+  .success-wrap .ic{width:72px; height:72px; border-radius:50%; background:var(--success-soft); display:flex; align-items:center; justify-content:center; margin-bottom:22px;}
+  .success-wrap .ic svg{width:34px; height:34px; stroke:var(--success);}
+  .success-wrap h2{font-family:var(--font-display); font-size:24px; font-weight:700; margin-bottom:8px;}
+  .success-wrap p{color:var(--text-secondary); font-size:14px; margin-bottom:28px;}
+  .breakdown{display:flex; gap:12px; width:100%; margin-bottom:30px;}
+  .bd-item{flex:1; background:var(--bg-surface-2); border:1px solid var(--border-subtle); border-radius:var(--r-md); padding:16px; text-align:left;}
+  .bd-item .v{font-family:var(--font-mono); font-size:18px; font-weight:600;}
+  .bd-item .l{font-size:11.5px; color:var(--text-tertiary); margin-top:4px;}
+</style>
+<link rel="stylesheet" href="styles.css">
+<script src="theme.js" defer></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo"><div class="mark">F</div><div class="name">FinTrack-Pro</div>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙<span>Dark</span></button>
+  </div>
+  <div class="nav-section-label">Overview</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Transactions</div>
+  <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Import Statement</div>
+  <div class="nav-section-label">Planning</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v4"/></svg>Budgets</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.6a5 5 0 0 0-7.07 0L12 6.34l-1.77-1.74a5 5 0 1 0-7.07 7.07L12 20l8.84-8.33a5 5 0 0 0 0-7.07z"/></svg>Goals</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-6"/></svg>Analytics</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg>Reports</div>
+  <div class="nav-section-label">Account</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82"/></svg>Settings</div>
+  <div class="sidebar-footer"><div class="avatar">RR</div><div><div class="who">Rutuja Rakibe</div><div class="plan">Premium plan</div></div></div>
+</aside>
+
+<main>
+  <div class="page-head">
+    <h1>Import Bank Statement</h1>
+    <div class="sub">Upload a CSV or Excel export and FinTrack-Pro will map and categorize it automatically.</div>
+  </div>
+
+  <div class="stepper">
+    <div class="step done" onclick="goStep(1)"><div class="circ">✓</div><div class="label">Upload</div></div>
+    <div class="step-line done"></div>
+    <div class="step active" onclick="goStep(2)" id="step2tab"><div class="circ">2</div><div class="label">Map columns</div></div>
+    <div class="step-line" id="line23"></div>
+    <div class="step" onclick="goStep(3)" id="step3tab"><div class="circ">3</div><div class="label">Preview</div></div>
+    <div class="step-line" id="line34"></div>
+    <div class="step" onclick="goStep(4)" id="step4tab"><div class="circ">4</div><div class="label">Done</div></div>
+  </div>
+
+  <!-- STEP 1: UPLOAD -->
+  <div class="card hidden" id="view1">
+    <div class="dropzone">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+      <h3>Drag and drop your statement here</h3>
+      <p>or click to browse from your computer · max 25MB</p>
+      <button class="btn btn-primary">Browse files</button>
+      <div class="format-row mt-lg">
+        <div class="format-pill">.CSF</div>
+        <div class="format-pill">.XLSX</div>
+        <div class="format-pill">.XLS</div>
+      </div>
+    </div>
+
+    <div class="history-head"><h3>Recent imports</h3><span class="caption-small">View all →</span></div>
+    <div class="hist-row">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg></div>
+      <div class="fill-flex"><div class="name">hdfc-statement-may-2026.csF</div><div class="meta">Imported May 31, 2026 · 212 transactions</div></div>
+      <span class="badge badge-success">Completed</span>
+    </div>
+    <div class="hist-row">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg></div>
+      <div class="fill-flex"><div class="name">icici-credit-april-2026.xlsx</div><div class="meta">Imported May 1, 2026 · 87 transactions</div></div>
+      <span class="badge badge-success">Completed</span>
+    </div>
+    <div class="actions-row"><button class="btn btn-primary" onclick="goStep(2)">Continue →</button></div>
+  </div>
+
+  <!-- STEP 2: MAPPING -->
+  <div class="card" id="view2">
+    <h3 class="field-title">Map your columns</h3>
+    <p class="field-copy">We detected these columns in hdfc-statement-june-2026.csv — confirm or adjust the mapping below.</p>
+
+    <div class="map-row">
+      <div class="map-col"><div class="l">Detected column</div><div class="v">Txn Date</div></div>
+      <div class="arrow">→</div>
+      <select class="input" title="Map transaction date"><option>Date</option><option>Description</option><option>Amount</option><option>Ignore</option></select>
+    </div>
+    <div class="map-row">
+      <div class="map-col"><div class="l">Detected column</div><div class="v">Narration</div></div>
+      <div class="arrow">→</div>
+      <select class="input" title="Map narration to description"><option>Description</option><option selected>Description</option><option>Date</option><option>Ignore</option></select>
+    </div>
+    <div class="map-row">
+      <div class="map-col"><div class="l">Detected column</div><div class="v">Withdrawal Amt.</div></div>
+      <div class="arrow">→</div>
+      <select class="input" title="Map withdrawal amount"><option selected>Amount (debit)</option><option>Amount (credit)</option><option>Ignore</option></select>
+    </div>
+    <div class="map-row">
+      <div class="map-col"><div class="l">Detected column</div><div class="v">Deposit Amt.</div></div>
+      <div class="arrow">→</div>
+      <select class="input" title="Map deposit amount"><option selected>Amount (credit)</option><option>Amount (debit)</option><option>Ignore</option></select>
+    </div>
+    <div class="map-row">
+      <div class="map-col"><div class="l">Detected column</div><div class="v">Ref No./Cheque No.</div></div>
+      <div class="arrow">→</div>
+      <select class="input" title="Map reference field"><option>Reference ID</option><option selected>Ignore</option></select>
+    </div>
+
+    <div class="actions-row"><button class="btn btn-secondary" onclick="goStep(1)">← Back</button><button class="btn btn-primary" onclick="goStep(3)">Continue →</button></div>
+  </div>
+
+  <!-- STEP 3: PREVIEW -->
+  <div class="card hidden" id="view3">
+    <h3 class="field-title">Preview &amp; validate</h3>
+    <div class="stat-strip">
+      <div class="ministat"><div class="v">248</div><div class="l">Total rows detected</div></div>
+      <div class="ministat"><div class="v status-success">244</div><div class="l">Valid &amp; ready</div></div>
+      <div class="ministat"><div class="v text-error">4</div><div class="l">Need attention</div></div>
+    </div>
+    <table>
+      <tr><th>Date</th><th>Description</th><th>Category</th><th class="text-right">Amount</th><th>Status</th></tr>
+      <tr><td>Jun 16, 2026</td><td>AMAZON RETAIL</td><td>Shopping</td><td class="amt-mono">−₹2,340.00</td><td><span class="badge badge-success">Ready</span></td></tr>
+      <tr><td>Jun 15, 2026</td><td>ACME CORP PAYROLL</td><td>Income</td><td class="amt-mono">+₹92,400.00</td><td><span class="badge badge-success">Ready</span></td></tr>
+      <tr class="err-row"><td>—</td><td>UPI/P2P/9182XXXX</td><td>Uncategorized</td><td class="amt-mono">−₹1,200.00</td><td><span class="badge badge-err-soft">Missing date</span></td></tr>
+      <tr><td>Jun 14, 2026</td><td>SWIGGY BANGALORE</td><td>Food</td><td class="amt-mono">−₹680.00</td><td><span class="badge badge-success">Ready</span></td></tr>
+      <tr class="err-row"><td>Jun 13, 2026</td><td>—</td><td>Uncategorized</td><td class="amt-mono">−₹350.00</td><td><span class="badge badge-err-soft">Missing description</span></td></tr>
+    </table>
+    <div class="actions-row"><button class="btn btn-secondary" onclick="goStep(2)">← Back</button><button class="btn btn-primary" onclick="goStep(4)">Confirm import →</button></div>
+  </div>
+
+  <!-- STEP 4: SUCCESS -->
+  <div class="card hidden" id="view4">
+    <div class="success-wrap">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <h2>Import complete</h2>
+      <p>244 transactions from hdfc-statement-june-2026.csv have been added to your account.</p>
+      <div class="breakdown">
+        <div class="bd-item"><div class="v">₹47,180</div><div class="l">Total expenses imported</div></div>
+        <div class="bd-item"><div class="v">₹92,400</div><div class="l">Total income imported</div></div>
+        <div class="bd-item"><div class="v">4</div><div class="l">Flagged for review</div></div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-secondary">Review flagged rows</button>
+        <button class="btn btn-primary">View transactions →</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  function goStep(n){
+    for(let i=1;i<=4;i++){
+      document.getElementById('view'+i).style.display = (i===n) ? 'block' : 'none';
+    }
+    const steps = document.querySelectorAll('.step');
+    steps.forEach((s,idx)=>{
+      s.classList.remove('active','done');
+      if(idx+1 < n) s.classList.add('done');
+      if(idx+1 === n) s.classList.add('active');
+    });
+    document.getElementById('line23').className = 'step-line' + (n>2 ? ' done':'');
+    document.getElementById('line34').className = 'step-line' + (n>3 ? ' done':'');
+  }
+  goStep(2);
+</script>
+
+</body>
+</html>

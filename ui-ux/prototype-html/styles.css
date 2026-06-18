@@ -1,0 +1,35 @@
+/* Central theme variables and utilities */
+:root{
+  --bg-base:#0A0E1A; --bg-surface:#121726; --bg-surface-2:#1A2032; --bg-surface-3:#20283D;
+  --border-subtle:#232A3D; --border-strong:#2E3650;
+  --text-primary:#F4F6FB; --text-secondary:#9AA3B8; --text-tertiary:#5C657C;
+  --accent-gold:#C9A661; --accent-gold-soft:rgba(201,166,97,.12);
+  --accent-indigo:#7C8AFF; --accent-indigo-soft:rgba(124,138,255,.12);
+  --success:#34D399; --success-soft:rgba(52,211,153,.12);
+  --warning:#F4B740; --error:#FF6B6B; --info:#5EC8F2;
+  --r-sm:8px; --r-md:10px; --r-lg:16px; --r-full:999px;
+}
+
+/* Light theme overrides */
+[data-theme="light"]{
+  --bg-base:#F7F9FB; --bg-surface:#FFFFFF; --bg-surface-2:#F3F6F9; --bg-surface-3:#EFF3F8;
+  --border-subtle:#E6EDF6; --border-strong:#DCE6F3;
+  --text-primary:#0B1220; --text-secondary:#475569; --text-tertiary:#6B7280;
+  --accent-gold:#C9A661; --accent-gold-soft:rgba(201,166,97,.08);
+  --accent-indigo:#4F59E0; --accent-indigo-soft:rgba(79,89,224,.06);
+  --success:#059669; --success-soft:rgba(5,150,105,.06);
+  --warning:#B45309; --error:#DC2626; --info:#0EA5E9;
+}
+
+/* Theme toggle */
+.theme-toggle{background:transparent;border:1px solid var(--border-subtle);color:var(--text-secondary);padding:8px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.theme-toggle svg{width:18px;height:18px}
+
+/* Helpers used earlier */
+.flex-end{display:flex;justify-content:flex-end}
+.v-success{color:var(--success)}
+.v-error{color:var(--error)}
+.v-gold{color:var(--accent-gold)}
+
+/* Smooth transition for theme change */
+*{transition:background-color .18s ease,color .18s ease,border-color .18s ease}

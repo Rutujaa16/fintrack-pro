@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTrack-Pro — Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base:#0A0E1A; --bg-surface:#121726; --bg-surface-2:#1A2032; --bg-surface-3:#20283D;
+    --border-subtle:#232A3D; --border-strong:#2E3650;
+    --text-primary:#F4F6FB; --text-secondary:#9AA3B8; --text-tertiary:#5C657C;
+    --accent-gold:#C9A661; --accent-gold-soft:rgba(201,166,97,.12);
+    --accent-indigo:#7C8AFF; --accent-indigo-soft:rgba(124,138,255,.12);
+    --success:#34D399; --success-soft:rgba(52,211,153,.12);
+    --warning:#F4B740; --error:#FF6B6B;
+    --r-sm:8px; --r-md:10px; --r-lg:16px; --r-full:999px;
+    --gold-glow:0 0 0 1px rgba(201,166,97,.4), 0 8px 24px rgba(201,166,97,.18);
+    --font-display:'Plus Jakarta Sans',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--bg-base); color:var(--text-primary); font-family:var(--font-body);}
+  body{display:grid; grid-template-columns:264px 1fr; min-height:100vh;}
+  a{text-decoration:none; color:inherit;}
+  ::-webkit-scrollbar{width:8px; height:8px;} ::-webkit-scrollbar-thumb{background:var(--bg-surface-3); border-radius:8px;}
+
+  .sidebar{background:var(--bg-surface); border-right:1px solid var(--border-subtle); padding:24px 16px; display:flex; flex-direction:column; height:100vh; position:sticky; top:0;}
+  .logo{display:flex; align-items:center; gap:10px; padding:0 8px 28px;}
+  .logo .mark{width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--accent-gold),#8a6f3d); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#15110a; font-size:15px;}
+  .logo .name{font-family:var(--font-display); font-weight:700; font-size:16px;}
+  .nav-section-label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 12px 8px; font-weight:600;}
+  .nav-item{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--r-sm); color:var(--text-secondary); font-size:14px; font-weight:500; margin-bottom:2px; cursor:pointer;}
+  .nav-item svg{width:18px; height:18px; opacity:.85;}
+  .nav-item:hover{background:var(--bg-surface-2); color:var(--text-primary);}
+  .nav-item.active{background:var(--accent-gold-soft); color:var(--accent-gold);}
+  .nav-item.active svg{stroke:var(--accent-gold); opacity:1;}
+  .sidebar-footer{margin-top:auto; border-top:1px solid var(--border-subtle); padding-top:16px; display:flex; align-items:center; gap:10px;}
+  .avatar{width:34px; height:34px; border-radius:50%; background:var(--bg-surface-3); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); flex-shrink:0;}
+  .sidebar-footer .who{font-size:13px; font-weight:600;}
+  .sidebar-footer .plan{font-size:11px; color:var(--text-tertiary);}
+
+  main{padding:28px 40px 64px; max-width:1100px;}
+  .page-head{margin-bottom:24px;}
+  .page-head h1{font-family:var(--font-display); font-size:26px; font-weight:700; letter-spacing:-.01em;}
+  .page-head .sub{color:var(--text-secondary); font-size:13px; margin-top:4px;}
+
+  .cover{position:relative; background:linear-gradient(135deg, #1A2032, #0E1424); border:1px solid var(--border-subtle); border-radius:var(--r-lg); padding:0 28px 28px; margin-bottom:24px;}
+  .cover-bg{height:88px; background:linear-gradient(120deg, rgba(201,166,97,.25), rgba(124,138,255,.15)); border-radius:var(--r-lg) var(--r-lg) 0 0; margin:0 -28px;}
+  .profile-row{display:flex; align-items:flex-end; gap:18px; margin-top:-38px;}
+  .big-avatar{width:84px; height:84px; border-radius:18px; background:var(--bg-surface-3); border:4px solid var(--bg-surface); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--accent-gold); flex-shrink:0;}
+  .profile-row .info{flex:1; padding-bottom:4px;}
+  .profile-row .info h2{font-family:var(--font-display); font-size:20px; font-weight:700;}
+  .profile-row .info .email{font-size:13px; color:var(--text-secondary); margin-top:2px;}
+  .badge-plan{display:inline-flex; align-items:center; gap:5px; background:var(--accent-gold); color:#171206; font-size:11px; font-weight:700; padding:4px 10px; border-radius:var(--r-full); margin-top:8px;}
+  .btn{font-family:var(--font-body); font-weight:600; font-size:13px; padding:10px 18px; border-radius:var(--r-md); border:1px solid var(--border-strong); cursor:pointer; display:inline-flex; align-items:center; gap:7px; background:var(--bg-surface-2); color:var(--text-primary);}
+  .btn-primary{background:var(--accent-gold); color:#171206; border:none; box-shadow:var(--gold-glow);}
+  .btn svg{width:15px; height:15px;}
+
+  .row2{display:grid; grid-template-columns:1.4fr 1fr; gap:20px;}
+  .card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-lg); padding:24px; margin-bottom:20px;}
+  .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;}
+  .card-head h3{font-family:var(--font-display); font-size:16px; font-weight:600;}
+
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+  .field label{font-size:12px; font-weight:600; color:var(--text-secondary);}
+  .input{background:var(--bg-surface-2); border:1px solid var(--border-strong); border-radius:var(--r-md); padding:11px 14px; color:var(--text-primary); font-size:13px; font-family:var(--font-body); width:100%;}
+
+  .sec-row{display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border-subtle);}
+  .sec-row:last-child{border-bottom:none;}
+  .sec-row .t{font-size:13.5px; font-weight:600;}
+  .sec-row .d{font-size:12px; color:var(--text-tertiary); margin-top:2px;}
+  .switch{width:38px; height:22px; border-radius:var(--r-full); background:var(--accent-gold-soft); border:1px solid var(--accent-gold); position:relative; cursor:pointer; flex-shrink:0;}
+  .switch .knob{width:16px; height:16px; border-radius:50%; background:var(--accent-gold); position:absolute; top:2px; left:18px;}
+  .switch.off{background:var(--bg-surface-3); border-color:var(--border-strong);}
+  .switch.off .knob{background:var(--text-tertiary); left:2px;}
+
+  .activity-row{display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-subtle);}
+  .activity-row:last-child{border-bottom:none;}
+  .activity-row .dot3{width:8px; height:8px; border-radius:50%; margin-top:5px; flex-shrink:0;}
+  .activity-row .t{font-size:13px; font-weight:500;}
+  .activity-row .d{font-size:11.5px; color:var(--text-tertiary); margin-top:2px;}
+</style>
+<link rel="stylesheet" href="styles.css">
+<script src="theme.js" defer></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo"><div class="mark">F</div><div class="name">FinTrack-Pro</div>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙<span>Dark</span></button>
+  </div>
+  <div class="nav-section-label">Overview</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Transactions</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Import Statement</div>
+  <div class="nav-section-label">Planning</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v4"/></svg>Budgets</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.6a5 5 0 0 0-7.07 0L12 6.34l-1.77-1.74a5 5 0 1 0-7.07 7.07L12 20l8.84-8.33a5 5 0 0 0 0-7.07z"/></svg>Goals</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-6"/></svg>Analytics</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg>Reports</div>
+  <div class="nav-section-label">Account</div>
+  <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82"/></svg>Settings</div>
+  <div class="sidebar-footer"><div class="avatar">RR</div><div><div class="who">Rutuja Rakibe</div><div class="plan">Premium plan</div></div></div>
+</aside>
+
+<main>
+  <div class="page-head"><h1>Profile</h1><div class="sub">Manage your personal information and account security</div></div>
+
+  <div class="cover">
+    <div class="cover-bg"></div>
+    <div class="profile-row">
+      <div class="big-avatar">RR</div>
+      <div class="info">
+        <h2>Rutuja Rakibe</h2>
+        <div class="email">rutujarakibe16@gmail.com · Member since Jan 2026</div>
+        <div class="badge-plan">★ Premium plan</div>
+      </div>
+      <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 9l5-5 5 5M12 4v12"/></svg>Change photo</button>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div>
+      <div class="card">
+        <div class="card-head"><h3>Personal information</h3><button class="btn btn-primary">Save changes</button></div>
+        <div class="two-col">
+          <div class="field"><label>First name</label><input class="input" title="First name" placeholder="First name" value="Rutuja"></div>
+          <div class="field"><label>Last name</label><input class="input" title="Last name" placeholder="Last name" value="Rakibe"></div>
+        </div>
+        <div class="field"><label>Email address</label><input class="input" title="Email address" placeholder="Email address" value="rutujarakibe16@gmail.com"></div>
+        <div class="two-col">
+          <div class="field"><label>Phone number</label><input class="input" title="Phone number" placeholder="Phone number" value="+91 91670 61051"></div>
+          <div class="field"><label>Date of birth</label><input class="input" title="Date of birth" placeholder="Date of birth" value="16 Mar 2003"></div>
+        </div>
+        <div class="field field-no-margin"><label>Default currency</label><input class="input" title="Default currency" placeholder="Default currency" value="INR (₹) — Indian Rupee"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Recent activity</h3></div>
+        <div class="activity-row"><div class="dot3 activity-dot-success"></div><div><div class="t">Signed in from Chrome on macOS</div><div class="d">Mumbai, India · Jun 17, 2026, 2:14 PM</div></div></div>
+        <div class="activity-row"><div class="dot3 activity-dot-gold"></div><div><div class="t">Imported hdfc-statement-june-2026.csF</div><div class="d">244 transactions added · Jun 16, 2026</div></div></div>
+        <div class="activity-row"><div class="dot3 activity-dot-indigo"></div><div><div class="t">Updated Shopping budget to ₹5,000</div><div class="d">Jun 10, 2026</div></div></div>
+        <div class="activity-row"><div class="dot3 activity-dot-warning"></div><div><div class="t">Password changed</div><div class="d">May 28, 2026</div></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-head"><h3>Security</h3></div>
+        <div class="sec-row"><div><div class="t">Two-factor authentication</div><div class="d">Adds an extra layer of security</div></div><div class="switch"><div class="knob"></div></div></div>
+        <div class="sec-row"><div><div class="t">Password</div><div class="d">Last changed 20 days ago</div></div><button class="btn btn-small">Change</button></div>
+        <div class="sec-row"><div><div class="t">Active sessions</div><div class="d">2 devices currently signed in</div></div><button class="btn btn-small">Manage</button></div>
+        <div class="sec-row"><div><div class="t">Login alerts</div><div class="d">Email me on new device sign-in</div></div><div class="switch"><div class="knob"></div></div></div>
+      </div>
+
+      <div class="card danger-border">
+        <div class="card-head"><h3 class="danger-title">Danger zone</h3></div>
+        <div class="sec-row"><div><div class="t">Delete account</div><div class="d">Permanently remove all your data</div></div><button class="btn btn-small danger-btn">Delete</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

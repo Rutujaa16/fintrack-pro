@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTrack-Pro — Goals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base:#0A0E1A; --bg-surface:#121726; --bg-surface-2:#1A2032; --bg-surface-3:#20283D;
+    --border-subtle:#232A3D; --border-strong:#2E3650;
+    --text-primary:#F4F6FB; --text-secondary:#9AA3B8; --text-tertiary:#5C657C;
+    --accent-gold:#C9A661; --accent-gold-soft:rgba(201,166,97,.12);
+    --accent-indigo:#7C8AFF; --accent-indigo-soft:rgba(124,138,255,.12);
+    --success:#34D399; --success-soft:rgba(52,211,153,.12);
+    --warning:#F4B740; --warning-soft:rgba(244,183,64,.12);
+    --error:#FF6B6B;
+    --info:#5EC8F2; --info-soft:rgba(94,200,242,.12);
+    --r-sm:8px; --r-md:10px; --r-lg:16px; --r-full:999px;
+    --gold-glow:0 0 0 1px rgba(201,166,97,.4), 0 8px 24px rgba(201,166,97,.18);
+    --font-display:'Plus Jakarta Sans',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--bg-base); color:var(--text-primary); font-family:var(--font-body);}
+  body{display:grid; grid-template-columns:264px 1fr; min-height:100vh;}
+  a{text-decoration:none; color:inherit;}
+  ::-webkit-scrollbar{width:8px; height:8px;} ::-webkit-scrollbar-thumb{background:var(--bg-surface-3); border-radius:8px;}
+
+  .sidebar{background:var(--bg-surface); border-right:1px solid var(--border-subtle); padding:24px 16px; display:flex; flex-direction:column; height:100vh; position:sticky; top:0;}
+  .logo{display:flex; align-items:center; gap:10px; padding:0 8px 28px;}
+  .logo .mark{width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--accent-gold),#8a6f3d); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#15110a; font-size:15px;}
+  .logo .name{font-family:var(--font-display); font-weight:700; font-size:16px;}
+  .nav-section-label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 12px 8px; font-weight:600;}
+  .nav-item{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--r-sm); color:var(--text-secondary); font-size:14px; font-weight:500; margin-bottom:2px; cursor:pointer;}
+  .nav-item svg{width:18px; height:18px; opacity:.85;}
+  .nav-item:hover{background:var(--bg-surface-2); color:var(--text-primary);}
+  .nav-item.active{background:var(--accent-gold-soft); color:var(--accent-gold);}
+  .nav-item.active svg{stroke:var(--accent-gold); opacity:1;}
+  .sidebar-footer{margin-top:auto; border-top:1px solid var(--border-subtle); padding-top:16px; display:flex; align-items:center; gap:10px;}
+  .avatar{width:34px; height:34px; border-radius:50%; background:var(--bg-surface-3); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); flex-shrink:0;}
+  .sidebar-footer .who{font-size:13px; font-weight:600;}
+  .sidebar-footer .plan{font-size:11px; color:var(--text-tertiary);}
+
+  main{padding:28px 40px 64px; max-width:1280px;}
+  .page-head{display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:28px;}
+  .page-head h1{font-family:var(--font-display); font-size:26px; font-weight:700; letter-spacing:-.01em;}
+  .page-head .sub{color:var(--text-secondary); font-size:13px; margin-top:4px;}
+  .btn{font-family:var(--font-body); font-weight:600; font-size:13px; padding:10px 18px; border-radius:var(--r-md); border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:7px;}
+  .btn-primary{background:var(--accent-gold); color:#171206; box-shadow:var(--gold-glow);}
+  .btn-secondary{background:var(--bg-surface-2); color:var(--text-primary); border-color:var(--border-strong);}
+  .btn svg{width:15px; height:15px;}
+
+  .goal-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:32px;}
+  .goal-card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-lg); padding:22px; display:flex; flex-direction:column;}
+  .goal-card .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+  .goal-card .ic{width:38px; height:38px; border-radius:var(--r-sm); display:flex; align-items:center; justify-content:center;}
+  .goal-card .ic svg{width:17px; height:17px;}
+  .goal-card .deadline{font-size:11px; color:var(--text-tertiary); font-weight:600;}
+  .goal-card .name{font-family:var(--font-display); font-size:16px; font-weight:600; margin-bottom:14px;}
+  .ring-row{display:flex; align-items:center; gap:18px; margin-bottom:16px;}
+  .ring{position:relative; width:64px; height:64px; flex-shrink:0;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring .pct{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:13px; font-weight:700;}
+  .ring-meta .v{font-family:var(--font-mono); font-size:17px; font-weight:600;}
+  .ring-meta .l{font-size:11.5px; color:var(--text-tertiary); margin-top:2px;}
+  .goal-card .foot{display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:14px; border-top:1px solid var(--border-subtle);}
+  .goal-card .foot .monthly{font-size:12px; color:var(--text-secondary);}
+  .goal-card .foot .monthly b{color:var(--text-primary); font-family:var(--font-mono);}
+  .pill-link{font-size:12px; font-weight:600; color:var(--accent-indigo); cursor:pointer;}
+
+  .achieved{position:relative; overflow:hidden; border:1px solid rgba(201,166,97,.35); background:linear-gradient(160deg, var(--accent-gold-soft), var(--bg-surface) 60%);}
+  .achieved .ribbon{position:absolute; top:14px; right:-30px; background:var(--accent-gold); color:#171206; font-size:10.5px; font-weight:700; padding:4px 36px; transform:rotate(40deg);}
+  .achieved .badge-done{display:inline-flex; align-items:center; gap:6px; background:var(--accent-gold); color:#171206; font-size:11.5px; font-weight:700; padding:5px 12px; border-radius:var(--r-full); margin-bottom:14px;}
+
+  .new-goal-card{border:1.5px dashed var(--border-strong); background:transparent; align-items:center; justify-content:center; cursor:pointer;}
+  .new-goal-card .center{text-align:center; color:var(--text-tertiary);}
+  .new-goal-card svg{width:24px; height:24px; margin-bottom:10px;}
+
+  .section-title{font-family:var(--font-display); font-size:16px; font-weight:600; margin-bottom:16px;}
+  .card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-lg); padding:22px;}
+  .contrib-row{display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--border-subtle); font-size:13px;}
+  .contrib-row:last-child{border-bottom:none;}
+  .contrib-row .ic{width:30px; height:30px; border-radius:50%; background:var(--success-soft); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .contrib-row .ic svg{width:13px; height:13px; stroke:var(--success);}
+  .contrib-row .name{font-weight:600;}
+  .contrib-row .meta{color:var(--text-tertiary); font-size:11.5px; margin-top:1px;}
+  .contrib-row .amt{margin-left:auto; font-family:var(--font-mono); font-weight:600; color:var(--success);}
+</style>
+<link rel="stylesheet" href="styles.css">
+<script src="theme.js" defer></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo"><div class="mark">F</div><div class="name">FinTrack-Pro</div>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙<span>Dark</span></button>
+  </div>
+  <div class="nav-section-label">Overview</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Transactions</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Import Statement</div>
+  <div class="nav-section-label">Planning</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v4"/></svg>Budgets</div>
+  <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.6a5 5 0 0 0-7.07 0L12 6.34l-1.77-1.74a5 5 0 1 0-7.07 7.07L12 20l8.84-8.33a5 5 0 0 0 0-7.07z"/></svg>Goals</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-6"/></svg>Analytics</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg>Reports</div>
+  <div class="nav-section-label">Account</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82"/></svg>Settings</div>
+  <div class="sidebar-footer"><div class="avatar">RR</div><div><div class="who">Rutuja Rakibe</div><div class="plan">Premium plan</div></div></div>
+</aside>
+
+<main>
+  <div class="page-head">
+    <div><h1>Savings Goals</h1><div class="sub">3 active goals · ₹3,52,000 saved toward targets</div></div>
+    <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New goal</button>
+  </div>
+
+  <div class="goal-grid">
+    <div class="goal-card">
+      <div class="top"><div class="ic goal-ic-indigo"><svg viewBox="0 0 24 24" fill="none" stroke="#7C8AFF" stroke-width="2"><path d="M2 16l6-6 4 4 8-9M16 5h6v6"/></svg></div><span class="deadline">Due Dec 2026</span></div>
+      <div class="name">Japan Trip</div>
+      <div class="ring-row">
+        <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="27" fill="none" stroke="#20283D" stroke-width="6"/><circle cx="32" cy="32" r="27" fill="none" stroke="#C9A661" stroke-width="6" stroke-dasharray="169.6" stroke-dashoffset="100" stroke-linecap="round"/></svg><div class="pct">41%</div></div>
+        <div class="ring-meta"><div class="v">₹62,000</div><div class="l">of ₹1,50,000 target</div></div>
+      </div>
+      <div class="foot"><span class="monthly">Saving <b>₹8,800</b>/mo</span><span class="pill-link">Add funds</span></div>
+    </div>
+
+    <div class="goal-card">
+      <div class="top"><div class="ic goal-ic-success"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="deadline">No deadline</span></div>
+      <div class="name">Emergency Fund</div>
+      <div class="ring-row">
+        <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="27" fill="none" stroke="#20283D" stroke-width="6"/><circle cx="32" cy="32" r="27" fill="none" stroke="#34D399" stroke-width="6" stroke-dasharray="169.6" stroke-dashoffset="34" stroke-linecap="round"/></svg><div class="pct">80%</div></div>
+        <div class="ring-meta"><div class="v">₹2,40,000</div><div class="l">of ₹3,00,000 target</div></div>
+      </div>
+      <div class="foot"><span class="monthly">Saving <b>₹15,000</b>/mo</span><span class="pill-link">Add funds</span></div>
+    </div>
+
+    <div class="goal-card achieved">
+      <div class="ribbon">DONE</div>
+      <div class="top"><div class="ic goal-ic-gold"><svg viewBox="0 0 24 24" fill="none" stroke="#C9A661" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v16"/></svg></div><span class="deadline">Completed May 2026</span></div>
+      <span class="badge-done">🏆 Goal achieved</span>
+      <div class="name">New Laptop</div>
+      <div class="ring-row">
+        <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="27" fill="none" stroke="#20283D" stroke-width="6"/><circle cx="32" cy="32" r="27" fill="none" stroke="#C9A661" stroke-width="6" stroke-dasharray="169.6" stroke-dashoffset="0" stroke-linecap="round"/></svg><div class="pct">100%</div></div>
+        <div class="ring-meta"><div class="v">₹90,000</div><div class="l">of ₹90,000 target</div></div>
+      </div>
+      <div class="foot"><span class="monthly">Saved in <b>6 months</b></span><span class="pill-link">View details</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">Recent contributions</div>
+  <div class="card">
+    <div class="contrib-row">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div><div class="name">Japan Trip</div><div class="meta">Auto-transfer · Jun 15, 2026</div></div>
+      <div class="amt">+₹8,800.00</div>
+    </div>
+    <div class="contrib-row">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div><div class="name">Emergency Fund</div><div class="meta">Auto-transfer · Jun 1, 2026</div></div>
+      <div class="amt">+₹15,000.00</div>
+    </div>
+    <div class="contrib-row">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div><div class="name">Japan Trip</div><div class="meta">Manual top-up · May 28, 2026</div></div>
+      <div class="amt">+₹5,000.00</div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
