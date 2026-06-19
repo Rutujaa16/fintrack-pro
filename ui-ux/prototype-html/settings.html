@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vantage — Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base:#0A0E1A; --bg-surface:#121726; --bg-surface-2:#1A2032; --bg-surface-3:#20283D;
+    --border-subtle:#232A3D; --border-strong:#2E3650;
+    --text-primary:#F4F6FB; --text-secondary:#9AA3B8; --text-tertiary:#5C657C;
+    --accent-gold:#C9A661; --accent-gold-soft:rgba(201,166,97,.12);
+    --accent-indigo:#7C8AFF; --accent-indigo-soft:rgba(124,138,255,.12);
+    --success:#34D399; --success-soft:rgba(52,211,153,.12);
+    --warning:#F4B740; --error:#FF6B6B; --info:#5EC8F2;
+    --r-sm:8px; --r-md:10px; --r-lg:16px; --r-full:999px;
+    --gold-glow:0 0 0 1px rgba(201,166,97,.4), 0 8px 24px rgba(201,166,97,.18);
+    --font-display:'Plus Jakarta Sans',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--bg-base); color:var(--text-primary); font-family:var(--font-body);}
+  body{display:grid; grid-template-columns:264px 1fr; min-height:100vh;}
+  a{text-decoration:none; color:inherit;}
+  ::-webkit-scrollbar{width:8px; height:8px;} ::-webkit-scrollbar-thumb{background:var(--bg-surface-3); border-radius:8px;}
+
+  /* ── Sidebar ── */
+  .sidebar{background:var(--bg-surface); border-right:1px solid var(--border-subtle); padding:24px 16px; display:flex; flex-direction:column; height:100vh; position:sticky; top:0;}
+  .logo{display:flex; align-items:center; gap:10px; padding:0 8px 28px;}
+  .logo .mark{width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--accent-gold),#8a6f3d); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#15110a; font-size:15px;}
+  .logo .name{font-family:var(--font-display); font-weight:700; font-size:16px;}
+  .nav-section-label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 12px 8px; font-weight:600;}
+  .nav-item{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--r-sm); color:var(--text-secondary); font-size:14px; font-weight:500; margin-bottom:2px; cursor:pointer;}
+  .nav-item svg{width:18px; height:18px; opacity:.85;}
+  .nav-item:hover{background:var(--bg-surface-2); color:var(--text-primary);}
+  .nav-item.active{background:var(--accent-gold-soft); color:var(--accent-gold);}
+  .nav-item.active svg{stroke:var(--accent-gold); opacity:1;}
+  .sidebar-footer{margin-top:auto; border-top:1px solid var(--border-subtle); padding-top:16px; display:flex; align-items:center; gap:10px;}
+  .sf-avatar{width:34px; height:34px; border-radius:50%; background:var(--bg-surface-3); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); flex-shrink:0;}
+  .sidebar-footer .who{font-size:13px; font-weight:600;}
+  .sidebar-footer .plan{font-size:11px; color:var(--text-tertiary);}
+
+  /* ── Layout ── */
+  .page-wrap{display:grid; grid-template-columns:216px 1fr; min-height:100vh;}
+  .settings-nav{border-right:1px solid var(--border-subtle); padding:28px 16px; position:sticky; top:0; height:100vh;}
+  .settings-nav .label{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-tertiary); font-weight:600; padding:0 12px 10px;}
+  .snav-item{display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:var(--r-sm); font-size:13.5px; color:var(--text-secondary); cursor:pointer; margin-bottom:2px; font-weight:500;}
+  .snav-item svg{width:16px; height:16px; opacity:.8;}
+  .snav-item:hover{background:var(--bg-surface-2); color:var(--text-primary);}
+  .snav-item.active{background:var(--accent-gold-soft); color:var(--accent-gold);}
+  .snav-item.active svg{stroke:var(--accent-gold); opacity:1;}
+
+  .content{padding:28px 40px 80px; max-width:820px;}
+  .page-head{margin-bottom:28px;}
+  .page-head h1{font-family:var(--font-display); font-size:26px; font-weight:700; letter-spacing:-.01em;}
+  .page-head .sub{color:var(--text-secondary); font-size:13px; margin-top:4px;}
+
+  /* ── Shared components ── */
+  .card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--r-lg); overflow:hidden; margin-bottom:18px;}
+  .card-head{padding:20px 24px 16px; border-bottom:1px solid var(--border-subtle);}
+  .card-head h3{font-family:var(--font-display); font-size:15px; font-weight:600;}
+  .card-head .desc{font-size:12.5px; color:var(--text-tertiary); margin-top:3px;}
+  .card-body{padding:4px 0;}
+
+  .row{display:flex; align-items:center; justify-content:space-between; padding:14px 24px; border-bottom:1px solid var(--border-subtle);}
+  .row:last-child{border-bottom:none;}
+  .row .l{flex:1;}
+  .row .t{font-size:13.5px; font-weight:600;}
+  .row .d{font-size:12px; color:var(--text-tertiary); margin-top:2px; line-height:1.45;}
+  .row .r{flex-shrink:0; margin-left:24px;}
+
+  /* toggle */
+  .toggle{width:40px; height:24px; border-radius:var(--r-full); position:relative; cursor:pointer; flex-shrink:0;}
+  .toggle.on{background:var(--accent-gold-soft); border:1.5px solid var(--accent-gold);}
+  .toggle.off{background:var(--bg-surface-3); border:1.5px solid var(--border-strong);}
+  .toggle .knob{width:18px; height:18px; border-radius:50%; position:absolute; top:2px; transition:.15s;}
+  .toggle.on .knob{background:var(--accent-gold); left:18px;}
+  .toggle.off .knob{background:var(--text-tertiary); left:2px;}
+
+  /* select pill */
+  .sel{background:var(--bg-surface-2); border:1px solid var(--border-strong); border-radius:var(--r-md); padding:8px 12px; font-size:13px; color:var(--text-primary); cursor:pointer; font-family:var(--font-body); font-weight:500; min-width:160px;}
+
+  /* btn */
+  .btn{font-family:var(--font-body); font-weight:600; font-size:12.5px; padding:8px 16px; border-radius:var(--r-md); border:1px solid var(--border-strong); cursor:pointer; background:var(--bg-surface-2); color:var(--text-primary); white-space:nowrap;}
+  .btn-primary{background:var(--accent-gold); color:#171206; border:none; box-shadow:var(--gold-glow);}
+  .btn-danger{background:rgba(255,107,107,.1); color:var(--error); border-color:rgba(255,107,107,.3);}
+
+  /* theme swatches */
+  .theme-row{display:flex; gap:10px; padding:18px 24px;}
+  .theme-opt{border-radius:var(--r-md); overflow:hidden; border:2px solid var(--border-subtle); cursor:pointer; width:100px;}
+  .theme-opt.active{border-color:var(--accent-gold);}
+  .theme-opt .swatch{height:48px;}
+  .theme-opt .label{background:var(--bg-surface-2); padding:7px 8px; font-size:11.5px; font-weight:600; text-align:center; color:var(--text-secondary);}
+  .theme-opt.active .label{color:var(--accent-gold);}
+
+  /* color accent picker */
+  .accent-row{display:flex; gap:10px; padding:0 24px 18px;}
+  .dot-pick{width:28px; height:28px; border-radius:50%; cursor:pointer; border:2.5px solid transparent;}
+  .dot-pick.active{border-color:var(--text-primary);}
+
+  /* notification channel badges */
+  .notif-channels{display:flex; gap:8px; flex-wrap:wrap;}
+  .ch{display:inline-flex; align-items:center; gap:5px; background:var(--bg-surface-2); border:1px solid var(--border-subtle); border-radius:var(--r-full); padding:5px 12px; font-size:12px; font-weight:600; color:var(--text-secondary); cursor:pointer;}
+  .ch.active{background:var(--accent-gold-soft); border-color:rgba(201,166,97,.4); color:var(--accent-gold);}
+  .ch svg{width:12px; height:12px;}
+
+  /* currency grid */
+  .currency-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding:0 24px 20px;}
+  .cur-opt{border:1px solid var(--border-subtle); border-radius:var(--r-md); padding:10px 14px; cursor:pointer; font-size:13px; font-weight:600;}
+  .cur-opt .sym{font-family:var(--font-mono); font-size:16px; display:block; margin-bottom:3px;}
+  .cur-opt .name{font-size:11px; color:var(--text-tertiary); font-weight:500;}
+  .cur-opt.active{border-color:var(--accent-gold); background:var(--accent-gold-soft);}
+
+  /* privacy */
+  .section-divider{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; padding:18px 24px 6px;}
+
+  .save-bar{position:sticky; bottom:0; background:rgba(10,14,26,.85); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); border-top:1px solid var(--border-subtle); padding:14px 40px; display:flex; align-items:center; justify-content:space-between;}
+  .save-bar .hint{font-size:12.5px; color:var(--text-tertiary);}
+  .overflow-auto{overflow-y:auto;}
+  .hidden{display:none;}
+  .row.no-border{border-bottom:none;}
+  .card-danger{border-color:rgba(255,107,107,.3);}
+  .danger-title{color:var(--error);}
+  .flex-gap{display:flex; gap:10px;}
+  .theme-swatch-dark .swatch{background:linear-gradient(135deg,#0A0E1A,#1A2032);}
+  .theme-swatch-light .swatch{background:linear-gradient(135deg,#F8F9FC,#E8EBF4);}
+  .theme-swatch-system .swatch{background:linear-gradient(135deg,#0A0E1A 50%,#F8F9FC 50%);}
+  .dot-pick.color-gold{background:#C9A661;}
+  .dot-pick.color-indigo{background:#7C8AFF;}
+  .dot-pick.color-success{background:#34D399;}
+  .dot-pick.color-error{background:#FF6B6B;}
+  .dot-pick.color-info{background:#5EC8F2;}
+  .dot-pick.color-warning{background:#F4B740;}
+</style>
+</head>
+<body>
+
+<!-- global sidebar -->
+<aside class="sidebar">
+  <div class="logo"><div class="mark">F</div><div class="name">FinTrack</div>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙<span>Dark</span></button>
+  </div>
+  <div class="nav-section-label">Overview</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Transactions</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Import Statement</div>
+  <div class="nav-section-label">Planning</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v4"/></svg>Budgets</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.6a5 5 0 0 0-7.07 0L12 6.34l-1.77-1.74a5 5 0 1 0-7.07 7.07L12 20l8.84-8.33a5 5 0 0 0 0-7.07z"/></svg>Goals</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-6"/></svg>Analytics</div>
+  <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h10a2 2 0 0 1 2 2v14l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/></svg>Reports</div>
+  <div class="nav-section-label">Account</div>
+  <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</div>
+  <div class="sidebar-footer"><div class="sf-avatar">MR</div><div><div class="who">Rutuja Rakibe</div><div class="plan">Premium plan</div></div></div>
+</aside>
+
+<!-- settings layout -->
+<div class="page-wrap">
+
+  <!-- settings sub-nav -->
+  <nav class="settings-nav">
+    <div class="label">Settings</div>
+    <div class="snav-item active" onclick="show('appearance')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Appearance
+    </div>
+    <div class="snav-item" onclick="show('notifications')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Notifications
+    </div>
+    <div class="snav-item" onclick="show('currency')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Currency &amp; Region
+    </div>
+    <div class="snav-item" onclick="show('privacy')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Privacy
+    </div>
+    <div class="snav-item" onclick="show('data')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Data &amp; Export
+    </div>
+  </nav>
+
+  <!-- main content area -->
+  <div class="overflow-auto">
+    <div class="content">
+      <div class="page-head"><h1>Settings</h1><div class="sub">Customize FinTrack to work exactly the way you want</div></div>
+
+      <!-- ── APPEARANCE ── -->
+      <div id="sec-appearance">
+        <div class="card">
+          <div class="card-head"><h3>Theme</h3><div class="desc">Choose how FinTrack looks on your screen</div></div>
+          <div class="theme-row">
+            <div class="theme-opt theme-swatch-dark active">
+              <div class="swatch"></div>
+              <div class="label">Dark</div>
+            </div>
+            <div class="theme-opt theme-swatch-light">
+              <div class="swatch"></div>
+              <div class="label">Light</div>
+            </div>
+            <div class="theme-opt theme-swatch-system">
+              <div class="swatch"></div>
+              <div class="label">System</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Accent colour</h3><div class="desc">Used for primary actions and highlights throughout the app</div></div>
+          <div class="accent-row">
+            <div class="dot-pick color-gold active"></div>
+            <div class="dot-pick color-indigo"></div>
+            <div class="dot-pick color-success"></div>
+            <div class="dot-pick color-error"></div>
+            <div class="dot-pick color-info"></div>
+            <div class="dot-pick color-warning"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Display</h3><div class="desc">Control how numbers, dates, and layout behave</div></div>
+          <div class="card-body">
+            <div class="row">
+              <div class="l"><div class="t">Compact mode</div><div class="d">Reduce spacing between rows in tables and lists</div></div>
+              <div class="r"><div class="toggle off"><div class="knob"></div></div></div>
+            </div>
+            <div class="row">
+              <div class="l"><div class="t">Date format</div><div class="d">Choose how dates appear across the app</div></div>
+              <div class="r"><select class="sel" title="Date format"><option>DD MMM YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div>
+            </div>
+            <div class="row">
+              <div class="l"><div class="t">Number format</div><div class="d">Thousand separator and decimal style</div></div>
+              <div class="r"><select class="sel" title="Number format"><option>1,00,000.00 (IN)</option><option>100,000.00 (US)</option></select></div>
+            </div>
+            <div class="row">
+              <div class="l"><div class="t">Language</div><div class="d">Interface language for menus and labels</div></div>
+              <div class="r"><select class="sel" title="Language"><option>English</option><option>Hindi</option><option>Tamil</option></select></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOTIFICATIONS ── -->
+      <div id="sec-notifications" class="hidden">
+        <div class="card">
+          <div class="card-head"><h3>Delivery channels</h3><div class="desc">Choose how you want to receive notifications</div></div>
+          <div class="row no-border">
+            <div class="notif-channels">
+              <div class="ch active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>Email</div>
+              <div class="ch active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>Push</div>
+              <div class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.61 1H7a2 2 0 0 1 2 1.72 12.5 12.5 0 0 0 .7 2.81A2 2 0 0 1 9.2 8L8 8.9a16 16 0 0 0 6.6 6.6l1.1-1.2a2 2 0 0 1 3.19.5 12.5 12.5 0 0 0 2.61.7A2 2 0 0 1 22 16.92z"/></svg>SMS</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Budget &amp; spending alerts</h3><div class="desc">Stay on top of your limits</div></div>
+          <div class="card-body">
+            <div class="row"><div class="l"><div class="t">Budget at 80%</div><div class="d">Alert when any category hits 80% of limit</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Budget exceeded</div><div class="d">Alert when you go over any budget</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Large transaction</div><div class="d">Alert for any single transaction above ₹10,000</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Import &amp; account alerts</h3></div>
+          <div class="card-body">
+            <div class="row"><div class="l"><div class="t">Statement import complete</div><div class="d">Notify when an import finishes processing</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Import errors found</div><div class="d">Alert if rows fail validation during import</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Goal milestones</div><div class="d">Celebrate reaching 50% and 100% of a goal</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Weekly digest</div><div class="d">Summary of your spending every Sunday morning</div></div><div class="r"><div class="toggle off"><div class="knob"></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CURRENCY & REGION ── -->
+      <div id="sec-currency" class="hidden">
+        <div class="card">
+          <div class="card-head"><h3>Default currency</h3><div class="desc">All amounts will be displayed in this currency</div></div>
+          <div class="currency-grid">
+            <div class="cur-opt active"><span class="sym">₹</span><span class="name">Indian Rupee · INR</span></div>
+            <div class="cur-opt"><span class="sym">$</span><span class="name">US Dollar · USD</span></div>
+            <div class="cur-opt"><span class="sym">€</span><span class="name">Euro · EUR</span></div>
+            <div class="cur-opt"><span class="sym">£</span><span class="name">Pound Sterling · GBP</span></div>
+            <div class="cur-opt"><span class="sym">¥</span><span class="name">Japanese Yen · JPY</span></div>
+            <div class="cur-opt"><span class="sym">د.إ</span><span class="name">UAE Dirham · AED</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Budget cycle</h3><div class="desc">When does your monthly budget reset?</div></div>
+          <div class="card-body">
+            <div class="row"><div class="l"><div class="t">Cycle start day</div><div class="d">Your budget resets on the 1st of each month</div></div><div class="r"><select class="sel"><option>1st of month</option><option>15th of month</option><option>Custom…</option></select></div></div>
+            <div class="row"><div class="l"><div class="t">Carry forward unspent</div><div class="d">Add leftover budget to next month's limit</div></div><div class="r"><div class="toggle off"><div class="knob"></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PRIVACY ── -->
+      <div id="sec-privacy" class="hidden">
+        <div class="card">
+          <div class="card-head"><h3>Data visibility</h3><div class="desc">Control how your financial data is used within Vantage</div></div>
+          <div class="card-body">
+            <div class="row"><div class="l"><div class="t">Analytics &amp; insights</div><div class="d">Allow Vantage to generate spending insights from your transactions</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Auto-categorization</div><div class="d">Automatically assign categories to imported transactions</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Improve suggestions</div><div class="d">Use anonymised data to improve category matching</div></div><div class="r"><div class="toggle off"><div class="knob"></div></div></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>App lock</h3><div class="desc">Require authentication when opening the app</div></div>
+          <div class="card-body">
+            <div class="row"><div class="l"><div class="t">Require PIN on open</div><div class="d">Lock Vantage after 5 minutes of inactivity</div></div><div class="r"><div class="toggle on"><div class="knob"></div></div></div></div>
+            <div class="row"><div class="l"><div class="t">Hide balances on launch</div><div class="d">Blur all amounts until you tap to reveal</div></div><div class="r"><div class="toggle off"><div class="knob"></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DATA & EXPORT ── -->
+      <div id="sec-data" class="hidden">
+        <div class="card">
+          <div class="card-head"><h3>Export your data</h3><div class="desc">Download a full copy of your Vantage data at any time</div></div>
+          <div class="card-body">
+            <div class="row"><div class="l"><div class="t">All transactions</div><div class="d">Every transaction you've added or imported · CSV</div></div><div class="r"><button class="btn">Download</button></div></div>
+            <div class="row"><div class="l"><div class="t">Budgets &amp; goals</div><div class="d">Your budget and savings goal history · CSV</div></div><div class="r"><button class="btn">Download</button></div></div>
+            <div class="row"><div class="l"><div class="t">Full data archive</div><div class="d">Complete account export including settings · ZIP</div></div><div class="r"><button class="btn">Request archive</button></div></div>
+          </div>
+        </div>
+
+        <div class="card card-danger">
+          <div class="card-head"><h3 class="danger-title">Danger zone</h3><div class="desc">These actions are permanent and cannot be undone</div></div>
+          <div class="card-body">
+            <div class="row"><div class="l"><div class="t">Delete all transactions</div><div class="d">Remove every imported and manual transaction</div></div><div class="r"><button class="btn btn-danger">Delete transactions</button></div></div>
+            <div class="row"><div class="l"><div class="t">Delete account</div><div class="d">Permanently close your Vantage account and all data</div></div><div class="r"><button class="btn btn-danger">Delete account</button></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <div class="save-bar">
+      <span class="hint">Unsaved changes will be lost if you navigate away</span>
+      <div class="flex-gap">
+        <button class="btn">Discard</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  const sections = ['appearance','notifications','currency','privacy','data'];
+  const navItems = document.querySelectorAll('.snav-item');
+
+  function show(id){
+    sections.forEach(s => document.getElementById('sec-'+s).style.display = (s===id) ? 'block' : 'none');
+    navItems.forEach((el,i) => el.classList.toggle('active', sections[i]===id));
+  }
+
+  navItems.forEach((el,i) => el.addEventListener('click', () => show(sections[i])));
+</script>
+
+</body>
+</html>
